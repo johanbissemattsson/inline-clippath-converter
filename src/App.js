@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { css } from 'glamor'
 import SvgPath from 'svgpath'
+import ReactHtmlParser from 'react-html-parser';
+import { filter, flatten } from 'lodash'
 
 class App extends Component {
   constructor(props) {
@@ -15,6 +17,7 @@ class App extends Component {
 
     const min = 1;
     const max = 9999;
+    const tabSpaces = '  ';
 
     this._handleWidthChange = (event) => {
       this.setState({width: event.target.value});
@@ -31,27 +34,65 @@ class App extends Component {
     this._handlePathDataChange = (event) => {
       this.setState({input: event.target.value});
     }
+
+    this._tabs = (size) => {
+      let tabs = '';
+      let i = 0;
+      for (i = 0; i < size; i++) { 
+        tabs += tabSpaces;
+      } 
+      return tabs;
+    }
+
+    this._convertPath = (input, width, height, decimals) => {
+      const hej = SvgPath(input).iterate((segment) => {
+      for (let i = 1; i < segment.length; i+=2) {
+        const inputX = segment[i];
+        const inputY = segment[i+1];
+        const outputX = inputX / width;
+        const outputY = inputY / height;
+        segment[i] = outputX;
+        segment[i+1] = outputY;
+      }
+    }).round(decimals).toString()
+    console.log(hej);
+    return hej;
+  };
     
-    this._convertPathData = (input, inputWidth, inputHeight, inputDecimals) => {
+    this._convertData = (input, inputWidth, inputHeight, inputDecimals) => {
       const width = Math.min(Math.max(Number(inputWidth), min), max);
       const height = Math.min(Math.max(Number(inputHeight), min), max);
       const decimals = Math.min(Math.max(Number(inputDecimals), 2), max);
-      console.log(width);
-      const output = SvgPath(input).iterate((segment) => {
-        for (let i = 1; i < segment.length; i+=2) {
-          const inputX = segment[i];
-          const inputY = segment[i+1];
-          const outputX = inputX / width;
-          const outputY = inputY / height;
-          segment[i] = outputX;
-          segment[i+1] = outputY;
+
+      const parsedData = ReactHtmlParser(this.state.input);
+      return parsedData.map((item) => {
+        if (React.isValidElement(item) && item.type === 'svg') {
+          const clippaths = filter(flatten(item.props.children), ((childItem) => (React.isValidElement(childItem) && childItem.type === 'clippath')));
+          console.log('clippaths', clippaths);
+          return (
+            '<svg xmlns="http://www.w3.org/2000/svg" class="clippath" viewBox="0 0 1 1">\n' + 
+            this._tabs(1) + '<defs>\n' +
+              clippaths.map((clippathItem) => {
+                const paths = filter(clippathItem.props.children, ((clippathItemChild) => {
+                  return (React.isValidElement(clippathItemChild) && clippathItemChild.type === 'path')
+                }));
+                return (
+                this._tabs(2) + '<clipPath id="' + clippathItem.props.id + '" clipPathUnits="objectBoundingBox">\n' +
+                 paths.map((pathItem ) => '<path d="' + this._convertPath(pathItem.props.d, width, height, decimals) + '"/>\n') +
+                this._tabs(2) + '</clipPath>\n'
+                )}).join('') + 
+            this._tabs(1) + '</defs>\n' +
+            '</svg>\n'
+          );
+        } else {
+          const output = this._convertPath(input, width, height, decimals)
+          if (output !== '') {
+            return output;
+          } else {
+            return 'No valid input data!'
+          }
         }
-      }).round(decimals).toString();
-      if (output != '') {
-        return output;
-      } else {
-        return 'No valid input data!'
-      }
+      }).join('');
     }
 
     this._onOutputClick = (event) => {
@@ -83,7 +124,7 @@ class App extends Component {
               <label>Output decimals:</label>
               <input type='number' max='9' min='2' value={this.state.decimals} onChange={this._handleDecimalsChange}/>
               <label>Converted SVG path data (click to copy):</label>
-              <textarea id='output' onClick={this._onOutputClick} readOnly='readonly' value={this._convertPathData(this.state.input, this.state.width, this.state.height, this.state.decimals)}></textarea>
+              <textarea id='output' onClick={this._onOutputClick} readOnly='readonly' value={this._convertData(this.state.input, this.state.width, this.state.height, this.state.decimals)}></textarea>
             </div>
           </div>
         </form>
@@ -170,3 +211,13 @@ let outputStyle = css({
   maxWidth: '960px',
   margin: '2em auto',
 });
+
+/*
+<svg xmlns="http://www.w3.org/2000/svg" class="clippath" viewBox="0 0 1 1">
+  <defs>
+    <clipPath id="clippath-konstfack">
+      <path d="M10,30 A20,20,0,0,1,50,30 A20,20,0,0,1,90,30 Q90,60,50,90 Q10,60,10,30 Z"/>
+    </clipPath>
+  </defs>
+</svg>
+*/
