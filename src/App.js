@@ -46,7 +46,7 @@ class App extends Component {
           segment[i+1] = outputY;
         }
       }).round(decimals).toString();
-      if (output != '') {
+      if (output !== '') {
         return output;
       } else {
         return 'No valid input data!'
