@@ -36,7 +36,6 @@ class App extends Component {
       const width = Math.min(Math.max(Number(inputWidth), min), max);
       const height = Math.min(Math.max(Number(inputHeight), min), max);
       const decimals = Math.min(Math.max(Number(inputDecimals), 2), max);
-      console.log(width);
       const output = SvgPath(input).iterate((segment) => {
         for (let i = 1; i < segment.length; i+=2) {
           const inputX = segment[i];
@@ -68,7 +67,7 @@ class App extends Component {
             <div {...inputStyle}>
             <header {...headerStyle}>
               <h1>Inline Clippath Converter</h1>
-              <p>Converts SVG path data dimensions to range between 0 – 1.</p>
+              <p>Converts SVG path data to range between 0 – 1.</p>
             </header>
               <label>Input width:</label>
               <input type='number' value={this.state.width} onChange={this._handleWidthChange} />
