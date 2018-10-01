@@ -28,7 +28,11 @@ class App extends Component {
     }
     
     this._handleDecimalsChange = (event) => {
-      this.setState({decimals: event.target.value});
+      let value = event.target.value;
+      if (value > 9) {
+        value = 9;
+      }
+      this.setState({decimals: value});
     }
     
     this._handlePathDataChange = (event) => {
