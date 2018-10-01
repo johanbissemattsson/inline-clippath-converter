@@ -128,10 +128,10 @@ class App extends Component {
             </header>
               <label>Input width:</label>
               <input type='number' value={this.state.width} onChange={this._handleWidthChange} />
-              <small>(Input width is skipped if copied SVG already has width and height)</small>
+              <small>(skipped if copied SVG already has width and height attributes)</small>
               <label>Input height*:</label>
               <input type='number' value={this.state.height} onChange={this._handleHeightChange} />        
-              <small>(Input height is skipped if copied SVG already has width and height)</small>
+              <small>(skipped if copied SVG already has width and height attributes)</small>
               <label>Input SVG path data:</label>
               <textarea onChange={this._handlePathDataChange} value={this.state.input} placeholder='m333 123 314.123 101...'></textarea>
             </div>
