@@ -74,6 +74,8 @@ class App extends Component {
       if (this.state.input.startsWith('<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n<!-- Created with Inkscape (http://www.inkscape.org/) -->')) {
         return ReactHtmlParser(this.state.input).map((item) => {
           if (React.isValidElement(item) && item.type === 'svg') {
+            const svgWidth = item.props.width;
+            const svgHeight = item.props.height;
             const defs = this._filterDefs(item.props.children);
             if (defs.length !== 0 && defs[0].props && defs[0].props.children.length !== 0) {
               const clippaths = this._filterClipPaths(defs[0].props.children);
@@ -87,7 +89,7 @@ class App extends Component {
                       }));
                       return (
                       this._tabs(2) + '<clipPath id="' + clippathItem.props.id + '" clipPathUnits="objectBoundingBox">\n' +
-                        paths.map((pathItem ) => this._tabs(3) + '<path d="' + this._convertPath(pathItem.props.d, width, height, decimals) + '"/>\n') +
+                        paths.map((pathItem ) => this._tabs(3) + '<path d="' + this._convertPath(pathItem.props.d, svgWidth ? svgWidth : width, svgHeight ? svgHeight : height, decimals) + '"/>\n') +
                       this._tabs(2) + '</clipPath>\n'
                       )}).join('') + 
                   this._tabs(1) + '</defs>\n' +
@@ -126,8 +128,10 @@ class App extends Component {
             </header>
               <label>Input width:</label>
               <input type='number' value={this.state.width} onChange={this._handleWidthChange} />
-              <label>Input height:</label>
+              <small>(Input width is skipped if copied SVG already has width and height)</small>
+              <label>Input height*:</label>
               <input type='number' value={this.state.height} onChange={this._handleHeightChange} />        
+              <small>(Input height is skipped if copied SVG already has width and height)</small>
               <label>Input SVG path data:</label>
               <textarea onChange={this._handlePathDataChange} value={this.state.input} placeholder='m333 123 314.123 101...'></textarea>
             </div>
@@ -195,6 +199,10 @@ let formStyle = css({
     width: '100%',
     minHeight: '8em',
     boxSizing: 'border-box',
+  },
+  '& small': {
+    label: 'small',
+    opacity: 0.33
   }
 });
 
