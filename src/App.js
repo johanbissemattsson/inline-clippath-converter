@@ -147,7 +147,10 @@ let inputContainerStyle = css({
   label: 'inputContainer',
   padding: '0 5%',
   width: '100%',
-  boxSizing: 'border-box'
+  boxSizing: 'border-box',
+  display: 'flex',
+  alignItems: 'center',
+  minHeight: '50vh'
 });
 
 let outputContainerStyle = css({
@@ -156,16 +159,21 @@ let outputContainerStyle = css({
   background: '#ebffeb',
   width: '100%',
   boxSizing: 'border-box',
-  flex: 1
+  display: 'flex',
+  alignItems: 'center',
+  flex: 1,
+  minHeight: '50vh'
 });
 
 let inputStyle = css({
   maxWidth: '960px',
   margin: '0 auto',
   marginBottom: '2em',
+  flex: 1
 });
 
 let outputStyle = css({
   maxWidth: '960px',
   margin: '2em auto',
+  flex: 1
 });
