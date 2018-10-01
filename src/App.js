@@ -45,18 +45,15 @@ class App extends Component {
     }
 
     this._filterClipPaths = (children) => filter(children, ((childItem) => {
-      if (childItem && childItem.props && childItem.props.children ) {
-        const contents = this._filterClipPaths(childItem.props.children);
-        console.log(contents);
-        if (React.isValidElement(contents) && contents.type === 'clippath') {
-          return contents;
-        }
-      }
       return (React.isValidElement(childItem) && childItem.type === 'clippath')
     }));
 
+    this._filterDefs = (children) => filter(children, ((childItem) => {
+      return (React.isValidElement(childItem) && childItem.type === 'defs')
+    }));
+
     this._convertPath = (input, width, height, decimals) => {
-      const hej = SvgPath(input).iterate((segment) => {
+      const convertedPath = SvgPath(input).iterate((segment) => {
       for (let i = 1; i < segment.length; i+=2) {
         const inputX = segment[i];
         const inputY = segment[i+1];
@@ -66,8 +63,7 @@ class App extends Component {
         segment[i+1] = outputY;
       }
     }).round(decimals).toString()
-    console.log(hej);
-    return hej;
+    return convertedPath;
   };
     
     this._convertData = (input, inputWidth, inputHeight, inputDecimals) => {
@@ -75,28 +71,33 @@ class App extends Component {
       const height = Math.min(Math.max(Number(inputHeight), min), max);
       const decimals = Math.min(Math.max(Number(inputDecimals), 2), max);
 
-      const parsedData = ReactHtmlParser(this.state.input);
-      return parsedData.map((item) => {
-        if (React.isValidElement(item) && item.type === 'svg') {
-          const clippaths = this._filterClipPaths(item.props.children);
-          console.log('clippaths', clippaths);
-
-          return (
-            '<svg xmlns="http://www.w3.org/2000/svg" class="clippath" viewBox="0 0 1 1">\n' + 
-            this._tabs(1) + '<defs>\n' +
-              clippaths.map((clippathItem) => {
-                const paths = filter(clippathItem.props.children, ((clippathItemChild) => {
-                  return (React.isValidElement(clippathItemChild) && clippathItemChild.type === 'path')
-                }));
+      if (this.state.input.startsWith('<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n<!-- Created with Inkscape (http://www.inkscape.org/) -->')) {
+        return ReactHtmlParser(this.state.input).map((item) => {
+          if (React.isValidElement(item) && item.type === 'svg') {
+            const defs = this._filterDefs(item.props.children);
+            if (defs.length !== 0 && defs[0].props && defs[0].props.children.length !== 0) {
+              const clippaths = this._filterClipPaths(defs[0].props.children);
+              if (clippaths.length !== 0) {
                 return (
-                this._tabs(2) + '<clipPath id="' + clippathItem.props.id + '" clipPathUnits="objectBoundingBox">\n' +
-                  paths.map((pathItem ) => '<path d="' + this._convertPath(pathItem.props.d, width, height, decimals) + '"/>\n') +
-                this._tabs(2) + '</clipPath>\n'
-                )}).join('') + 
-            this._tabs(1) + '</defs>\n' +
-            '</svg>\n'
-          );
-        } else {
+                  '<svg xmlns="http://www.w3.org/2000/svg" class="clippath" viewBox="0 0 1 1">\n' + 
+                  this._tabs(1) + '<defs>\n' +
+                    clippaths.map((clippathItem) => {
+                      const paths = filter(clippathItem.props.children, ((clippathItemChild) => {
+                        return (React.isValidElement(clippathItemChild) && clippathItemChild.type === 'path')
+                      }));
+                      return (
+                      this._tabs(2) + '<clipPath id="' + clippathItem.props.id + '" clipPathUnits="objectBoundingBox">\n' +
+                        paths.map((pathItem ) => this._tabs(3) + '<path d="' + this._convertPath(pathItem.props.d, width, height, decimals) + '"/>\n') +
+                      this._tabs(2) + '</clipPath>\n'
+                      )}).join('') + 
+                  this._tabs(1) + '</defs>\n' +
+                  '</svg>\n'
+                );
+              }
+            }
+          }
+        return ('')}).join('');
+      } else {
           const output = this._convertPath(input, width, height, decimals)
           if (output !== '') {
             return output;
@@ -104,8 +105,8 @@ class App extends Component {
             return 'No valid input data!'
           }
         }
-      }).join('');
-    }
+      }
+    
 
     this._onOutputClick = (event) => {
       document.getElementById('output').select();
