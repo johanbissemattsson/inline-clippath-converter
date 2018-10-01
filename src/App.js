@@ -174,6 +174,6 @@ let inputStyle = css({
 
 let outputStyle = css({
   maxWidth: '960px',
-  margin: '2em auto',
+  margin: '2em auto 6em auto',
   flex: 1
 });
