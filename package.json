@@ -5,9 +5,12 @@
   "homepage": "http://johanbissemattsson.github.io/inline-clippath-converter",
   "dependencies": {
     "glamor": "^2.20.40",
+    "lodash": "^4.17.11",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
+    "react-html-parser": "^2.0.2",
     "react-scripts": "1.1.5",
+    "react-svg": "^6.0.15",
     "svgpath": "^2.2.1"
   },
   "scripts": {
