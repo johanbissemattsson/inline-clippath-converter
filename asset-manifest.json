@@ -1,4 +1,11 @@
 {
-  "main.js": "static/js/main.94e9f4d2.js",
-  "main.js.map": "static/js/main.94e9f4d2.js.map"
+  "main.js": "/inline-clippath-converter/static/js/main.375aacae.chunk.js",
+  "main.js.map": "/inline-clippath-converter/static/js/main.375aacae.chunk.js.map",
+  "static/js/1.08fd9658.chunk.js": "/inline-clippath-converter/static/js/1.08fd9658.chunk.js",
+  "static/js/1.08fd9658.chunk.js.map": "/inline-clippath-converter/static/js/1.08fd9658.chunk.js.map",
+  "runtime~main.js": "/inline-clippath-converter/static/js/runtime~main.12f27ec1.js",
+  "runtime~main.js.map": "/inline-clippath-converter/static/js/runtime~main.12f27ec1.js.map",
+  "index.html": "/inline-clippath-converter/index.html",
+  "precache-manifest.f2b3b95c90a4aa0f61201a3b9da8e7ed.js": "/inline-clippath-converter/precache-manifest.f2b3b95c90a4aa0f61201a3b9da8e7ed.js",
+  "service-worker.js": "/inline-clippath-converter/service-worker.js"
 }
