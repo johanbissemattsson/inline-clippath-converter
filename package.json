@@ -9,7 +9,7 @@
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "react-html-parser": "^2.0.2",
-    "react-scripts": "1.1.5",
+    "react-scripts": "2.0.3",
     "react-svg": "^6.0.15",
     "svgpath": "^2.2.1"
   },
@@ -23,5 +23,11 @@
   },
   "devDependencies": {
     "gh-pages": "^2.0.0"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }

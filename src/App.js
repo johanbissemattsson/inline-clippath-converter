@@ -85,7 +85,7 @@ class App extends Component {
               const clippaths = this._filterClipPaths(defs[0].props.children);
               if (clippaths.length !== 0) {
                 return (
-                  '<svg xmlns="http://www.w3.org/2000/svg" class="clippath" viewBox="0 0 1 1">\n' + 
+                  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1">\n' + 
                   this._tabs(1) + '<defs>\n' +
                     clippaths.map((clippathItem) => {
                       const paths = filter(clippathItem.props.children, ((clippathItemChild) => {
@@ -133,7 +133,7 @@ class App extends Component {
               <label>Input width:</label>
               <input type='number' value={this.state.width} onChange={this._handleWidthChange} />
               <small>(skipped if copied SVG already has width and height attributes)</small>
-              <label>Input height*:</label>
+              <label>Input height:</label>
               <input type='number' value={this.state.height} onChange={this._handleHeightChange} />        
               <small>(skipped if copied SVG already has width and height attributes)</small>
               <label>Input SVG path data:</label>
@@ -175,9 +175,9 @@ let appStyle = css({
 
 let headerStyle = css({
   label: 'header',
-  fontSize: '1em',
+  fontSize: '0.75em',
   '@media (min-width: 640px)': {
-    fontSize: '1.25em'
+    fontSize: '1em'
   }
 })
 
